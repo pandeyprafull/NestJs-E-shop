@@ -9,7 +9,7 @@
  import { HttpModule } from '@nestjs/axios';
  import { getEntities } from '@shop_org/schemas'
 
-//  import * as modules from '../index';
+ import * as modules from '../index';
 
  import { MulterModule } from '@nestjs/platform-express';
 
@@ -29,7 +29,7 @@
     }),
     TypeOrmModule.forFeature(getEntities()),
      HttpModule,
-    //  ...Object.values(modules)
+     ...Object.values(modules)
    ],
    controllers: [AppController],
    providers: [AppService],
