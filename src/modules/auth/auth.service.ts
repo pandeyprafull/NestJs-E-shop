@@ -28,10 +28,10 @@ export class AuthService {
         let validPwd = await this.helperService.validatePassword(user.password, body.password)
 
         if (!validPwd) this.errorService.throwError('BAD_REQUEST', `Wrong Password`, HttpStatus.BAD_REQUEST)
-         throw new HttpException(`Wrong Password`, HttpStatus.BAD_REQUEST)
+
         //save user token in DB
         const token = this.helperService.generateToken(user);
-        console.dir(token, {depth:null});
+        console.dir(token, { depth: null });
 
         user.token = token;
         await this.userService.getRepo().save(user);
