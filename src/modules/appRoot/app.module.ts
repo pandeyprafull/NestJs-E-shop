@@ -7,6 +7,7 @@
  import { AppController } from './app.controller';
  import { AppService } from './app.service';
  import { HttpModule } from '@nestjs/axios';
+ import { JwtModule } from '@nestjs/jwt';
  import { getEntities } from '@shop_org/schemas'
 
  import * as modules from '../index';
@@ -28,6 +29,10 @@
       autoLoadEntities: true
     }),
     TypeOrmModule.forFeature(getEntities()),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: {algorithm: 'HS256', expiresIn: '69d'}
+    }),
      HttpModule,
      ...Object.values(modules)
    ],
@@ -36,7 +41,8 @@
    exports: [
      TypeOrmModule,
      AppService,
-     HttpModule
+     HttpModule,
+     JwtModule
    ]
  })
  export class AppModule {}

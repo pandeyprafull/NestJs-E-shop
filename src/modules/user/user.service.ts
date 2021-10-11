@@ -13,7 +13,7 @@ export class UserService {
         // @Inject(forwardRef(() => HelperService))
         private readonly helperService: HelperService
     ){}
-    async getRepo(){
+     getRepo(){
         return this.userRepository;
     }
 
