@@ -31,7 +31,7 @@ export class AuthService {
 
         //save user token in DB
         const token = this.helperService.generateToken(user);
-        console.dir(token, { depth: null });
+        // console.dir(token, { depth: null });
 
         user.token = token;
         await this.userService.getRepo().save(user);

@@ -8,9 +8,10 @@
  import { AppService } from './app.service';
  import { HttpModule } from '@nestjs/axios';
  import { JwtModule } from '@nestjs/jwt';
- import { getEntities } from '@shop_org/schemas'
+ import { getEntities } from '@shop_org/schemas';
 
  import * as modules from '../index';
+ import * as guards from '../../guards'
 
  import { MulterModule } from '@nestjs/platform-express';
 
@@ -37,12 +38,17 @@
      ...Object.values(modules)
    ],
    controllers: [AppController],
-   providers: [AppService],
+   providers: [
+     AppService,
+     ...Object.values(guards)
+    ],
    exports: [
      TypeOrmModule,
      AppService,
      HttpModule,
-     JwtModule
+     JwtModule,
+     ...Object.values(guards)
+
    ]
  })
  export class AppModule {}

@@ -12,18 +12,22 @@ export class UserService {
         private readonly userRepository: Repository<User>,
         // @Inject(forwardRef(() => HelperService))
         private readonly helperService: HelperService
-    ){}
-     getRepo(){
+    ) { }
+    getRepo() {
         return this.userRepository;
     }
 
-    async getMe(user: User){
+    async getMe(user: User) {
+        const userDetails =  await this.getRepo().createQueryBuilder('user')
+            .select()
+            .where('user.id = :userId', { userId: user.id })
+            .getOne();
 
-        return "you called the User details";
-
+            delete userDetails.password;
+            return userDetails;
     }
 
-    async createUser(body: CreateUserBody){
+    async createUser(body: CreateUserBody) {
         const user = new User();
 
         //compulsory fields
@@ -33,11 +37,11 @@ export class UserService {
         user.password = await this.helperService.hashPassword(body.password)
 
         //optional
-        if(body.phone_number) user.phone_number = body.phone_number;
-        if(body.role) user.role = Role[body.role] ;
+        if (body.phone_number) user.phone_number = body.phone_number;
+        if (body.role) user.role = Role[body.role];
         await this.userRepository.save(user);
 
-        return { message: "User Create SuccessFully", user: user.id}
+        return { message: "User Create SuccessFully", user: user.id }
 
     }
 }
