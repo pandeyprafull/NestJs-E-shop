@@ -13,6 +13,8 @@ export class UserController {
     @UseGuards(AuthGuard)
     async getMe(@Req() req: any) {
         const user: User = req.user;
+        console.log("---- User --")
+        console.dir(user, {depth:null})
         return await this.userService.getMe(user)
     }
 

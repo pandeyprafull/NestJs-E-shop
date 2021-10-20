@@ -18,8 +18,9 @@ export class AuthGuard implements CanActivate {
         const authorizationHeader: string = request.headers['authorization'] || request.headers['Authorization']
 
         if (authorizationHeader) {
-            const token = authorizationHeader.replace('Bearer', '');
-            const signedUser = this.jwtService.verify(token);
+            const token = authorizationHeader.split(' ')[1];
+            console.log("token----->", token)
+            const signedUser = this.jwtService.verify(token, {secret: process.env.JWT_SECRET});
             console.log("----- signedUser ----")
             console.dir(signedUser, { depth: null })
 
