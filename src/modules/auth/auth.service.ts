@@ -12,7 +12,7 @@ export class AuthService {
         private readonly errorService: ErrorService
     ) { }
     async signIn(body: SignInBody) {
-        const email = body.email;
+        const email = body.email.toLowerCase();
         const user = await this.userService.getRepo().createQueryBuilder('user')
             .select([
                 'user.id',
