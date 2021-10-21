@@ -1,15 +1,20 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ErrorService } from '../error/error.service';
+import { FacebookService } from '../facebook/facebook.service';
+import { GoogleService } from '../google/google.service';
 import { HelperService } from '../helper/helper.service';
 import { SignInBody } from '../user/DTO';
 import { UserService } from '../user/user.service';
+import { ExternalSignIn } from './DTO';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly userService: UserService,
         private readonly helperService: HelperService,
-        private readonly errorService: ErrorService
+        private readonly errorService: ErrorService,
+        private readonly googleService: GoogleService,
+        private readonly facebookService: FacebookService
     ) { }
     async signIn(body: SignInBody) {
         const email = body.email.toLowerCase();
@@ -40,6 +45,18 @@ export class AuthService {
             message: `Login Success`,
             action: true,
             token: token
+        }
+    }
+
+    async externalSignIn(body: ExternalSignIn) {
+        switch (body.provider) {
+            case 'google': {
+                return this.googleService.signIn(body.token)
+            } break;
+            case 'facebook': {
+                return this.facebookService.signIn(body.token)
+            }
+            default: throw new HttpException('Unknown Provider', HttpStatus.BAD_REQUEST)
         }
     }
 }
