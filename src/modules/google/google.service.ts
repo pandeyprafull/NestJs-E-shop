@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import * as qs from 'querystring';
 
 @Injectable()
 export class GoogleService {
@@ -18,5 +19,20 @@ export class GoogleService {
                 }, HttpStatus.INTERNAL_SERVER_ERROR)
             })
 console.log(`---- Google login Detected ---`, data)
+    }
+
+    async genToken(code: string){
+        const tokenAR = await this.httpService.post('https://oauth2.googleapis.com/token', qs.stringify({
+            code: code,
+            client_id: process.env.GOOGLE_CLIENT_ID,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET,
+            redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+            grant_type: 'authorization_code'
+          }), {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          }).toPromise();
+
     }
 }

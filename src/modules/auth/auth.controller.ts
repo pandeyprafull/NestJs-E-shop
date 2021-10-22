@@ -19,8 +19,9 @@ export class AuthController {
         return this.authService.externalSignIn(body)
 
     }
-
-    @Get('/google')
+    
+//create to test Oauth
+    @Get('/test')
     async generateCode(@Query() query: any) {
         console.log("---- query ----",query)
 
