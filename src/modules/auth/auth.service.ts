@@ -51,7 +51,9 @@ export class AuthService {
     async externalSignIn(body: ExternalSignIn) {
         switch (body.provider) {
             case 'google': {
-                return this.googleService.signIn(body.token)
+                return this.googleService.signIn(body.code)
+                // return this.googleService.genToken(body.code)
+
             } break;
             case 'facebook': {
                 return this.facebookService.signIn(body.token)
