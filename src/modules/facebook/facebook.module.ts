@@ -6,6 +6,6 @@ import { FacebookService } from './facebook.service';
 @Module({
   controllers: [FacebookController],
   providers: [FacebookService],
-  exports: [FacebookService]
+  exports: [FacebookService],
 })
 export class FacebookModule {}

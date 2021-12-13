@@ -9,56 +9,72 @@ import { ExternalSignIn } from './DTO';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        private readonly userService: UserService,
-        private readonly helperService: HelperService,
-        private readonly errorService: ErrorService,
-        private readonly googleService: GoogleService,
-        private readonly facebookService: FacebookService
-    ) { }
-    async signIn(body: SignInBody) {
-        const email = body.email.toLowerCase();
-        const user = await this.userService.getRepo().createQueryBuilder('user')
-            .select([
-                'user.id',
-                'user.email',
-                'user.password',
-                'user.role',
-                'user.token'
-            ])
-            .where('user.email = :email', { email })
-            .getOne();
-        if (!user) throw new HttpException(`User with ${email} not exist!!`, HttpStatus.NOT_FOUND);
+  constructor(
+    private readonly userService: UserService,
+    private readonly helperService: HelperService,
+    private readonly errorService: ErrorService,
+    private readonly googleService: GoogleService,
+    private readonly facebookService: FacebookService,
+  ) {}
+  async signIn(body: SignInBody) {
+    const email = body.email.toLowerCase();
+    const user = await this.userService
+      .getRepo()
+      .createQueryBuilder('user')
+      .select([
+        'user.id',
+        'user.email',
+        'user.password',
+        'user.role',
+        'user.token',
+      ])
+      .where('user.email = :email', { email })
+      .getOne();
+    if (!user)
+      throw new HttpException(
+        `User with ${email} not exist!!`,
+        HttpStatus.NOT_FOUND,
+      );
 
-        let validPwd = await this.helperService.validatePassword(user.password, body.password)
+    let validPwd = await this.helperService.validatePassword(
+      user.password,
+      body.password,
+    );
 
-        if (!validPwd) this.errorService.throwError('BAD_REQUEST', `Wrong Password`, HttpStatus.BAD_REQUEST)
+    if (!validPwd)
+      this.errorService.throwError(
+        'BAD_REQUEST',
+        `Wrong Password`,
+        HttpStatus.BAD_REQUEST,
+      );
 
-        //save user token in DB
-        const token = this.helperService.generateToken(user);
-        // console.dir(token, { depth: null });
+    //save user token in DB
+    const token = this.helperService.generateToken(user);
+    // console.dir(token, { depth: null });
 
-        user.token = token;
-        await this.userService.getRepo().save(user);
+    user.token = token;
+    await this.userService.getRepo().save(user);
 
-        return {
-            message: `Login Success`,
-            action: true,
-            token: token
+    return {
+      message: `Login Success`,
+      action: true,
+      token: token,
+    };
+  }
+
+  async externalSignIn(body: ExternalSignIn) {
+    switch (body.provider) {
+      case 'google':
+        {
+          return this.googleService.signIn(body.code);
+          // return this.googleService.genToken(body.code)
         }
+        break;
+      case 'facebook': {
+        return this.facebookService.signIn(body.token);
+      }
+      default:
+        throw new HttpException('Unknown Provider', HttpStatus.BAD_REQUEST);
     }
-
-    async externalSignIn(body: ExternalSignIn) {
-        switch (body.provider) {
-            case 'google': {
-                return this.googleService.signIn(body.code)
-                // return this.googleService.genToken(body.code)
-
-            } break;
-            case 'facebook': {
-                return this.facebookService.signIn(body.token)
-            }
-            default: throw new HttpException('Unknown Provider', HttpStatus.BAD_REQUEST)
-        }
-    }
+  }
 }

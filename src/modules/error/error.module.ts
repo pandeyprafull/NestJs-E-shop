@@ -6,6 +6,6 @@ import { ErrorService } from './error.service';
 @Module({
   controllers: [ErrorController],
   providers: [ErrorService],
-  exports: [ErrorService]
+  exports: [ErrorService],
 })
 export class ErrorModule {}

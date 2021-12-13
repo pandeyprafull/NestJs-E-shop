@@ -6,6 +6,6 @@ import { ProductService } from './product.service';
 @Module({
   controllers: [ProductController],
   providers: [ProductService],
-  exports: [ProductService]
+  exports: [ProductService],
 })
 export class ProductModule {}
